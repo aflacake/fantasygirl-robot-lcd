@@ -1,0 +1,30 @@
+/* style.css */
+
+body {
+    display: flex;
+    height: 100dvh;
+    margin: 0;
+    background: white;
+    justify-content: center;
+    align-items: center;
+    overflow: hidden;
+}
+
+#lcd {
+    display: flex;
+    position: relative;
+    width: 400px;
+    height: 200px;
+    justify-content: center;
+    align-items: center;
+    gap: 200px;
+}
+
+#mata, #mata2 {
+    width: 160px;
+    transition: transform 0.15s ease-out;
+}
+
+#kamera {
+    display: none;
+}
