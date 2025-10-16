@@ -1,25 +1,20 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-  <meta charset="UTF-8">
-  <title>FantasyGirl Chatbot</title>
-  <link rel="stylesheet" href="style.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LCD Mata</title>
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <div id="sakura-kontainer"></div>
-  <div id="pesan-kontainer">
-    <div id="karakter">
-      <div class="pembungkus-karakter">
-        <img id="gmbr-karak" src="https://raw.githubusercontent.com/aflacake/fantasygirl-chatbot/main/assets/20250930_171854.png" alt="Karakter">
-      </div>
+    <video id="kamera" autoplay playsinline></video>
+
+    <div id="lcd">
+        <img src="https://raw.githubusercontent.com/aflacake/fantasygirl-robot-lcd/main/img/mata.png" id="mata">
+        <div id="jedaMata"></div>
+        <img src="https://raw.githubusercontent.com/aflacake/fantasygirl-robot-lcd/main/img/mata.png" id="mata2">
     </div>
-    <div id="garis-kecepatan"></div>
-    <div id="pesan"></div>
-    <div id="boks-masukkan">
-      <input type="text" id="masukkan-pengguna" placeholder="Ketik pesan...">
-      <button id="tmbl-kirim">Kirim</button>
-    </div>
-  </div>
-  <script type="module" src="js/main.js"></script>
+
+    <script src="script.js"></script>
 </body>
 </html>
