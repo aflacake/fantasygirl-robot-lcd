@@ -80,8 +80,8 @@ function gerakanMata() {
 // simulasi gerakan acak tanpa kamera
 function gerakanAcak() {
     setInterval(() => {
-        const x = (Math.random() - 0.5) * 300;
-        const y = (Math.random() - 0.5) * 200;
+        const x = (Math.random() - 0.5) * 150;
+        const y = (Math.random() - 0.5) * 100;
         mata1.style.transform = `translate(${x}px, ${y}px)`;
         mata2.style.transform = `translate(${x}px, ${y}px)`;
     }, 5000);
