@@ -20,8 +20,10 @@ async function mulaiKamera() {
             tracker.start(video);
 
             console.log("Tracker dimulai");
-            perbarui();
-            kedipanAcak();
+            setTimeout(() => {
+                perbarui();
+                kedipanAcak();
+            }, 500);
         };
     } catch (err) {
         console.error("Tidak bisa mengakses kamera:", err);
@@ -30,13 +32,13 @@ async function mulaiKamera() {
     }
 }
 
-setTimeout(() => {
-    perbarui();
-    kedipanAcak();
-}, 500);
-
 // loop deteksi wajah
 function perbarui() {
+    if (!tracker) {
+        requestAnimationFrame(perbarui);
+        return;
+    }
+
     const posisi = tracker.getCurrentPosition();
     console.log("Posisi wajah:", posisi ? posisi.length : 0);
 
