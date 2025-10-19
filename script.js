@@ -14,19 +14,26 @@ async function mulaiKamera() {
         const aliran = await navigator.mediaDevices.getUserMedia({ video: true });
         video.srcObject = aliran;
 
-        tracker = new clm.tracker({ useWebGL: true });
-        tracker.init(pModel);
-        tracker.start(video);
+        video.onloadedmetadata = () => {
+            tracker = new clm.tracker({ useWebGL: true });
+            tracker.init(pModel);
+            tracker.start(video);
 
-        console.log("Tracker dimulai");
-        perbarui();
-        kedipanAcak();
+            console.log("Tracker dimulai");
+            perbarui();
+            kedipanAcak();
+        };
     } catch (err) {
         console.error("Tidak bisa mengakses kamera:", err);
         gerakanAcak();
         kedipanAcak();
     }
 }
+
+setTimeout(() => {
+    perbarui();
+    kedipanAcak();
+}, 500);
 
 // loop deteksi wajah
 function perbarui() {
