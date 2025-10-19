@@ -4,11 +4,9 @@ const video = document.getElementById("kamera");
 const mata1 = document.getElementById("mata");
 const mata2 = document.getElementById("mata2");
 
-let deteksiWajah;
+let tracker;
 let wajahTerdeteksi = false;
 let terakhirWajahX = 0.5, terakhirWajahY = 0.5;
-const jarakMata = 150;
-let waktuBerkedip;
 
 // aktifkan kamera
 async function mulaiKamera() {
@@ -16,42 +14,34 @@ async function mulaiKamera() {
         const aliran = await navigator.mediaDevices.getUserMedia({ video: true });
         video.srcObject = aliran;
 
-        if ("FaceDetector" in window) {
-            deteksiWajah = new FaceDetector({ fastMode: true });
-        } else {
-            console.warn("FaceDetector API tidak didukung browser ini");
-        }
+        tracker = new clm.tracker();
+        tracker.init();
+        tracker.start(video);
 
         perbarui();
         kedipanAcak();
     } catch (err) {
         console.error("Tidak bisa mengakses kamera:", err);
-        gerakanAcak(); // fallback: gerak acak tanpa wajah
+        gerakanAcak();
         kedipanAcak();
     }
 }
 
 // loop deteksi wajah
-async function perbarui() {
-    if (deteksiWajah) {
-        try {
-            const hasil = await deteksiWajah.detect(video);
-            if (hasil.length > 0) {
-                wajahTerdeteksi = true;
-                const kotak = faces[0].boundingBox;
-                const cx = kotak.x + kotak.width / 2;
-                const cy = kotak.y + kotak.height / 2;
-                const nx = cx / video.videoWidth;
-                const ny = cy / video.videoHeight;
+function perbarui() {
+    const posisi = tracker.getCurrentPosition();
+    if (posisi && posisi.length > 0) {
+        wajahTerdeteksi = true;
 
-                terakhirWajahX = nx;
-                terakhirWajahY = ny;
-            } else {
-                wajahTerdeteksi = false;
-            }
-        } catch (e) {
-            wajahTerdeteksi = false;
-        }
+        const semuaX = posisi.map(p => p[0]);
+        const semuaY = posisi.map(p => p[1]);
+        const cx = semuaX.reduce((a, b) => a + b, 0) / semuaX.length;
+        const cy = semuaY.reduce((a, b) => a + b, 0) / semuaY.length;
+
+        terakhirWajahX = cx / video.videoWidth;
+        terakhirWajahY = cy / video.videoHeight;
+    } else {
+        wajahTerdeteksi = false;
     }
 
     gerakanMata();
@@ -60,14 +50,13 @@ async function perbarui() {
 
 // gerakkan mata
 function gerakanMata() {
-    const gerakanMaks = 20; // derajat rotasi maksimum
+    const gerakanMaks = 20;
     let x, y;
 
     if (wajahTerdeteksi) {
         x = (terakhirWajahX - 0.5) * gerakanMaks;
         y = (terakhirWajahY - 0.5) * gerakanMaks;
     } else {
-        // jika tidak ada wajah, gerak acak sinkron
         const t = Date.now() / 50000;
         x = Math.sin(t * 0.6) * 8;
         y = Math.cos(t * 0.4) * 6;
@@ -80,8 +69,8 @@ function gerakanMata() {
 // simulasi gerakan acak tanpa kamera
 function gerakanAcak() {
     setInterval(() => {
-        const x = (Math.random() - 0.5) * 35;
-        const y = (Math.random() - 0.5) * 25;
+        const x = (Math.random() - 0.5) * 40;
+        const y = (Math.random() - 0.5) * 30;
         mata1.style.transform = `translate(${x}px, ${y}px)`;
         mata2.style.transform = `translate(${x}px, ${y}px)`;
     }, 5000);
@@ -99,7 +88,7 @@ function kedipan() {
 
 function kedipanAcak() {
     const tunggu = 2000 + Math.random() * 12000;
-    waktuBerkedip = setTimeout(() => {
+    setTimeout(() => {
         kedipan();
         kedipanAcak();
     }, tunggu);
