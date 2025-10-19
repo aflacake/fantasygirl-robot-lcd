@@ -14,10 +14,11 @@ async function mulaiKamera() {
         const aliran = await navigator.mediaDevices.getUserMedia({ video: true });
         video.srcObject = aliran;
 
-        tracker = new clm.tracker();
-        tracker.init();
+        tracker = new clm.tracker({ useWebGL: true });
+        tracker.init(pModel);
         tracker.start(video);
 
+        console.log("Tracker dimulai");
         perbarui();
         kedipanAcak();
     } catch (err) {
@@ -31,6 +32,11 @@ async function mulaiKamera() {
 function perbarui() {
     const posisi = tracker.getCurrentPosition();
     console.log("Posisi wajah:", posisi ? posisi.length : 0);
+
+    if (video.videoWidth === 0 || video.videoHeight === 0) {
+        requestAnimationFrame(perbarui);
+        return;
+    }
 
     if (posisi && posisi.length > 0) {
         wajahTerdeteksi = true;
@@ -47,10 +53,7 @@ function perbarui() {
     }
 
     gerakanMata();
-    if (video.videoWidth === 0 || video.videoHeight === 0) {
-        requestAnimationFrame(perbarui);
-        return;
-    }
+    requestAnimationFrame(perbarui);
 }
 
 // gerakkan mata
@@ -100,6 +103,3 @@ function kedipanAcak() {
 }
 
 mulaiKamera();
-tracker = new clm.tracker({ useWebGL: true });
-tracker.init(pModel);
-tracker.start(video);
