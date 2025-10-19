@@ -22,8 +22,8 @@ async function mulaiKamera() {
             tracker = new clm.tracker({ useWebGL: true });
             tracker.init(pModel);
             tracker.start(video);
-
             console.log("Tracker dimulai");
+
             perbarui();
             kedipanAcak();
         };
@@ -54,13 +54,14 @@ function perbarui() {
     if (posisi && posisi.length > 0) {
         if (!wajahTerdeteksi) console.log("Wajah ditemukan!");
         wajahTerdeteksi = true;
+
         const semuaX = posisi.map(p => p[0]);
         const semuaY = posisi.map(p => p[1]);
         const cx = semuaX.reduce((a, b) => a + b, 0) / semuaX.length;
         const cy = semuaY.reduce((a, b) => a + b, 0) / semuaY.length;
 
-        terakhirWajahX = cx / video.videoWidth;
-        terakhirWajahY = cy / video.videoHeight;
+        terakhirWajahX = 0.8 * terakhirWajahX + 0.2 * (cx / video.videoWidth);
+        terakhirWajahY = 0.8 * terakhirWajahY + 0.2 * (cy / video.videoHeight);
     } else {
         if (wajahTerdeteksi) console.log("Wajah hilang.");
         wajahTerdeteksi = false;
