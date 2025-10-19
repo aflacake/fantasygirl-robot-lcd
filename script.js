@@ -15,15 +15,17 @@ async function mulaiKamera() {
         video.srcObject = aliran;
 
         video.onloadedmetadata = () => {
+            console.log("Video dimulai dengan resolusi:", video.videoWidth, "x", video.videoHeight);
+
+            console.log("pModel:", typeof pModel !== "undefined" ? "terdeteksi" : "tidak ditemukan");
+
             tracker = new clm.tracker({ useWebGL: true });
             tracker.init(pModel);
             tracker.start(video);
 
             console.log("Tracker dimulai");
-            setTimeout(() => {
-                perbarui();
-                kedipanAcak();
-            }, 500);
+            perbarui();
+            kedipanAcak();
         };
     } catch (err) {
         console.error("Tidak bisa mengakses kamera:", err);
@@ -32,24 +34,26 @@ async function mulaiKamera() {
     }
 }
 
+// Tambahan: visualisasi wajah
+const overlay = document.createElement("canvas");
+overlay.id = "overlay";
+overlay.width = 400;
+overlay.height = 200;
+overlay.style.position = "absolute";
+overlay.style.top = "0";
+overlay.style.left = "0";
+overlay.style.zIndex = "10";
+document.getElementById("lcd").appendChild(overlay);
+
+const overlayCtx = overlay.getContext("2d");
+
 // loop deteksi wajah
 function perbarui() {
-    if (!tracker) {
-        requestAnimationFrame(perbarui);
-        return;
-    }
-
     const posisi = tracker.getCurrentPosition();
-    console.log("Posisi wajah:", posisi ? posisi.length : 0);
-
-    if (video.videoWidth === 0 || video.videoHeight === 0) {
-        requestAnimationFrame(perbarui);
-        return;
-    }
 
     if (posisi && posisi.length > 0) {
+        if (!wajahTerdeteksi) console.log("Wajah ditemukan!");
         wajahTerdeteksi = true;
-
         const semuaX = posisi.map(p => p[0]);
         const semuaY = posisi.map(p => p[1]);
         const cx = semuaX.reduce((a, b) => a + b, 0) / semuaX.length;
@@ -58,6 +62,7 @@ function perbarui() {
         terakhirWajahX = cx / video.videoWidth;
         terakhirWajahY = cy / video.videoHeight;
     } else {
+        if (wajahTerdeteksi) console.log("Wajah hilang.");
         wajahTerdeteksi = false;
     }
 
