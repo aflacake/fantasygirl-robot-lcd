@@ -30,6 +30,8 @@ async function mulaiKamera() {
 // loop deteksi wajah
 function perbarui() {
     const posisi = tracker.getCurrentPosition();
+    console.log("Posisi wajah:", posisi ? posisi.length : 0);
+
     if (posisi && posisi.length > 0) {
         wajahTerdeteksi = true;
 
@@ -45,7 +47,10 @@ function perbarui() {
     }
 
     gerakanMata();
-    requestAnimationFrame(perbarui);
+    if (video.videoWidth === 0 || video.videoHeight === 0) {
+        requestAnimationFrame(perbarui);
+        return;
+    }
 }
 
 // gerakkan mata
@@ -95,3 +100,6 @@ function kedipanAcak() {
 }
 
 mulaiKamera();
+tracker = new clm.tracker({ useWebGL: true });
+tracker.init(pModel);
+tracker.start(video);
